@@ -1,0 +1,6 @@
+.signUp__form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 300px;
+}

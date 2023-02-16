@@ -1,0 +1,17 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 250px;
+    padding: 5px;
+    width: 100%;
+}
+
+.form__input {
+    height: 30px;
+    width: 95%;
+    padding: 5px;
+    background: none;
+    color: #000;
+    border: 1px solid var(--color-dark-grey);
+}
