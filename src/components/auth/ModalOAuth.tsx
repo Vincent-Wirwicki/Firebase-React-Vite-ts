@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
-import SignIn from "./SignIn";
 import "../../styles/components/auth/authModal.css";
 import "../../styles/components/auth/form.css";
 
@@ -65,8 +64,7 @@ const ModalAuth: React.FC = () => {
             X
           </button>
         </div>
-        <SignIn />
-        {/* <div className="auth__wrap__tab">
+        <div className="auth__wrap__tab">
           <button
             className={
               isSignUpDisplay
@@ -115,7 +113,7 @@ const ModalAuth: React.FC = () => {
               <h3 className="auth__form__error__text">{errorMsg}</h3>
             )}
           </div>
-        </form> */}
+        </form>
 
         <div>Or continue with</div>
         <button
