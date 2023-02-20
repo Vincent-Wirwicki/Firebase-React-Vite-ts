@@ -1,61 +1,54 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { auth, db } from "../../firebase/firebase";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { auth } from "../../firebase/firebase";
+import "../../styles/components/auth/form.css";
+import { AuthFormPropsType } from "./typesForm";
 
-const SignIn = () => {
-  const [userName, setUserName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  //   const userCollectionRef = collection(db, "users");
-
-  const addUserToFirestore = async () => {
-    if (auth.currentUser !== null) {
-      updateProfile(auth.currentUser, { displayName: userName });
-      await setDoc(doc(db, "users", auth.currentUser.uid), {
-        email: email,
-        userName: userName,
-      });
-    }
-  };
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+const SignIn: React.FC<AuthFormPropsType> = ({
+  formData,
+  setFormData,
+  onChange,
+  setToggleSignUp,
+  onCloseModal,
+}) => {
+  const { userName, email, password } = formData;
+  const onSubmit = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      addUserToFirestore();
+      await signInWithEmailAndPassword(auth, email, password);
+      onCloseModal();
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        autoComplete="true"
-        placeholder="user name"
-        value={userName}
-        onChange={e => setUserName(e.target.value)}
-        type="text"
-      />
+    <form onSubmit={onSubmit} className="form">
+      <h3>Register</h3>
       <input
         autoComplete="true"
         placeholder="email"
+        className="form__input"
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        id="email"
+        onChange={e => onChange(e)}
         type="text"
+        required
       />
       <input
         autoComplete="true"
         placeholder="password"
+        className="form__input"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        id="password"
+        onChange={e => onChange(e)}
         type="text"
+        required
       />
-      <button type="submit">Sign IN</button>
+      <button type="submit">Sign In</button>
+      <p>
+        You don't have an account ?
+        <a onClick={() => setToggleSignUp(true)}>Register</a>
+      </p>
     </form>
   );
 };

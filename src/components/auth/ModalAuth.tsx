@@ -1,58 +1,44 @@
 import { useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import SignIn from "./SignIn";
+import SignUp from "./SignUp";
+import SignWithProvider from "./SignWithProvider";
+import { FormDataTypes } from "./typesForm";
 import "../../styles/components/auth/authModal.css";
 import "../../styles/components/auth/form.css";
 
 const ModalAuth: React.FC = () => {
-  const {
-    user,
-    isAuthModalOpen,
-    setIsAuthModalOpen,
-    errorMessages,
-    createUser,
-    signIn,
-    signInWithGoogle,
-  } = UserAuth();
+  const { isAuthModalOpen, setIsAuthModalOpen } = UserAuth();
 
-  const [isSignUpDisplay, setIsSignUpDisplay] = useState<boolean>(true);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [toggleSignUp, setToggleSignUp] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
+
+  const [formData, setFormData] = useState<FormDataTypes>({
+    email: "",
+    password: "",
+    userName: "",
+  });
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
+  const onReset = () => {
+    setFormData(() => ({
+      email: "",
+      password: "",
+      userName: "",
+    }));
+  };
 
   const onCloseModal = (): void => {
     setIsAuthModalOpen(false);
-    setIsSignUpDisplay(true);
-    setPassword("");
-    setEmail("");
+    setToggleSignUp(true);
+    onReset();
     setErrorMsg("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      isSignUpDisplay
-        ? await createUser(email, password)
-        : await signIn(email, password);
-      onCloseModal();
-      setTimeout(() => console.log(user), 1000);
-    } catch (error: any) {
-      console.log(error);
-      for (const err in errorMessages) {
-        error.message.includes(err)
-          ? setErrorMsg("Oups something went wrong")
-          : setErrorMsg(errorMessages[err]);
-      }
-    }
-  };
-
-  const signWithProvider = async () => {
-    try {
-      await signInWithGoogle();
-      onCloseModal();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const displayModal = `auth__modal ${isAuthModalOpen ? "show" : "hide"}`;
@@ -65,67 +51,27 @@ const ModalAuth: React.FC = () => {
             X
           </button>
         </div>
-        <SignIn />
-        {/* <div className="auth__wrap__tab">
-          <button
-            className={
-              isSignUpDisplay
-                ? "auth__wrap__tab__btn__active"
-                : "auth__wrap__tab__btn"
-            }
-            onClick={() => setIsSignUpDisplay(true)}
-          >
-            Sign up
-          </button>
-          <button
-            className={
-              !isSignUpDisplay
-                ? "auth__wrap__tab__btn__active"
-                : "auth__wrap__tab__btn"
-            }
-            onClick={() => setIsSignUpDisplay(false)}
-          >
-            Sign In
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="auth__form">
-          <input
-            type="mail"
-            autoComplete="true"
-            className="auth__form__input"
-            placeholder="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            autoComplete="true"
-            minLength={6}
-            maxLength={60}
-            className="form__input"
-            placeholder="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          <button type="submit" className="auth__form__btn">
-            {isSignUpDisplay ? "Sign Up" : "Sign In"}
-          </button>
-          <div>
-            {errorMsg && (
-              <h3 className="auth__form__error__text">{errorMsg}</h3>
-            )}
-          </div>
-        </form> */}
-
-        <div>Or continue with</div>
-        <button
-          className="auth__provider__btn"
-          onClick={() => {
-            signWithProvider();
-          }}
-        >
-          GOOGLE
-        </button>
+        <>
+          {toggleSignUp ? (
+            <SignUp
+              formData={formData}
+              setFormData={setFormData}
+              onChange={onChange}
+              setToggleSignUp={setToggleSignUp}
+              onCloseModal={onCloseModal}
+            />
+          ) : (
+            <SignIn
+              formData={formData}
+              setFormData={setFormData}
+              onChange={onChange}
+              setToggleSignUp={setToggleSignUp}
+              onCloseModal={onCloseModal}
+            />
+          )}
+        </>
+        <p>Or continue with :</p>
+        <SignWithProvider />
       </div>
     </div>
   );
