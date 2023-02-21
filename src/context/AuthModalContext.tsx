@@ -1,48 +1,54 @@
 import { useState, useContext, createContext } from "react";
+import {
+  AuthModalContextType,
+  FormDataTypes,
+  AuthModalContextProviderType,
+} from "./types/AuthModalTypes";
 
-interface AuthModalCTXType {
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  userName: string;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
-  isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onCloseModal: () => void;
-}
-interface AuthModalCTXProviderType {
-  children: React.ReactNode;
-}
-const AuthModalCTX = createContext({} as AuthModalCTXType);
-export const AuthModalCTXProvider = ({
+const AuthModalContext = createContext({} as AuthModalContextType);
+
+export const AuthModalContextProvider = ({
   children,
-}: AuthModalCTXProviderType) => {
-  const [user, setUser] = useState("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isSignUp, setIsSignUpd] = useState<boolean>(true);
+}: AuthModalContextProviderType) => {
+  const [toggleModal, setToggleModal] = useState<boolean>(false);
+  const [toggleSignUp, setToggleSignUp] = useState<boolean>(true);
+  const [formData, setFormData] = useState<FormDataTypes>({
+    email: "",
+    password: "",
+    userName: "",
+  });
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
   const onCloseModal = (): void => {
-    setEmail("");
-    setPassword("");
-    setUserName("");
-    setIsModalOpen(false);
-    setIsSignUpd(true);
+    setToggleModal(false);
+    setToggleSignUp(true);
+    setFormData({ email: "", password: "", userName: "" });
   };
+
   const value = {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    userName,
-    setUserName,
-    isModalOpen,
-    setIsModalOpen,
+    formData,
+    toggleModal,
+    setFormData,
+    setToggleModal,
+    toggleSignUp,
+    setToggleSignUp,
     onCloseModal,
+    onChange,
   };
+
   return (
-    <AuthModalCTX.Provider value={value}>{children}</AuthModalCTX.Provider>
+    <AuthModalContext.Provider value={value}>
+      {children}
+    </AuthModalContext.Provider>
   );
+};
+
+export const AuthModal = () => {
+  return useContext(AuthModalContext);
 };

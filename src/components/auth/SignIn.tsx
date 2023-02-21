@@ -1,17 +1,12 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { AuthModal } from "../../context/AuthModalContext";
 import { auth } from "../../firebase/firebase";
 import "../../styles/components/auth/form.css";
-import { AuthFormPropsType } from "./typesForm";
 
-const SignIn: React.FC<AuthFormPropsType> = ({
-  formData,
-  setFormData,
-  onChange,
-  setToggleSignUp,
-  onCloseModal,
-}) => {
-  const { userName, email, password } = formData;
+const SignIn: React.FC = () => {
+  const { onCloseModal, setToggleSignUp, onChange, formData } = AuthModal();
+  const { email, password } = formData;
+
   const onSubmit = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -23,7 +18,7 @@ const SignIn: React.FC<AuthFormPropsType> = ({
 
   return (
     <form onSubmit={onSubmit} className="form">
-      <h3>Register</h3>
+      <h3>Log In</h3>
       <input
         autoComplete="true"
         placeholder="email"
@@ -45,10 +40,6 @@ const SignIn: React.FC<AuthFormPropsType> = ({
         required
       />
       <button type="submit">Sign In</button>
-      <p>
-        You don't have an account ?
-        <a onClick={() => setToggleSignUp(true)}>Register</a>
-      </p>
     </form>
   );
 };

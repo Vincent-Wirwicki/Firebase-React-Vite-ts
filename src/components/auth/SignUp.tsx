@@ -1,17 +1,11 @@
-import { useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { setDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { AuthModal } from "../../context/AuthModalContext";
 import "../../styles/components/auth/form.css";
-import { AuthFormPropsType } from "./typesForm";
 
-const SignUp: React.FC<AuthFormPropsType> = ({
-  formData,
-  setFormData,
-  onChange,
-  setToggleSignUp,
-  onCloseModal,
-}) => {
+const SignUp: React.FC = ({}) => {
+  const { onCloseModal, setToggleSignUp, onChange, formData } = AuthModal();
   const { userName, email, password } = formData;
   const addUserToFirestoreDB = async (): Promise<void> => {
     if (auth.currentUser !== null) {
@@ -73,10 +67,6 @@ const SignUp: React.FC<AuthFormPropsType> = ({
         required
       />
       <button type="submit">Sign Up</button>
-      <p>
-        You already have an account ?
-        <a onClick={() => setToggleSignUp(false)}> Login</a>
-      </p>
     </form>
   );
 };

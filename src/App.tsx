@@ -1,17 +1,20 @@
 import Header from "./components/header/Header";
-import { AuthContextProvider } from "./context/AuthContext";
+// import { AuthContextProvider } from "./context/AuthContext";
+import { AuthModalContextProvider } from "./context/AuthModalContext";
+import { AuthUserContextProvider } from "./context/AuthUserContext";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import ModalAuth from "./components/auth/ModalAuth";
 
 const App = () => {
-  // console.log(user);
   return (
     <div className="App">
-      <AuthContextProvider>
-        <Header />
-        <ModalAuth />
-      </AuthContextProvider>
+      <AuthModalContextProvider>
+        <AuthUserContextProvider>
+          <Header />
+          <ModalAuth />
+        </AuthUserContextProvider>
+      </AuthModalContextProvider>
     </div>
   );
 };
