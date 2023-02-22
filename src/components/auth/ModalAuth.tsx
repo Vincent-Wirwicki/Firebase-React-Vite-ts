@@ -1,37 +1,44 @@
+import { AuthModal } from "../../context/AuthModalContext";
+import { auth } from "../../firebase/firebase";
+import ForgotPassword from "./ForgotPassword";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import SignWithProvider from "./SignWithProvider";
-import { AuthModal } from "../../context/AuthModalContext";
+import SpanForm from "./SpanForm";
 import "../../styles/components/auth/authModal.css";
 import "../../styles/components/auth/form.css";
 
 const ModalAuth: React.FC = () => {
-  const { toggleModal, onCloseModal, toggleSignUp, setToggleSignUp } =
-    AuthModal();
+  const { toggleModal, onCloseModal, forms, activeForm } = AuthModal();
 
-  const displayModal = `auth__modal ${toggleModal ? "show" : "hide"}`;
+  const { signIn, signUp, forgotPassword } = forms;
+
+  if (auth.currentUser !== null) {
+    return <></>;
+  }
 
   return (
-    <div className={displayModal}>
+    <div className={`auth__modal ${toggleModal ? "show" : "hide"}`}>
       <div className="auth__wrap">
         <div className="auth__wrap__btn__close">
           <button className="auth__btn__close" onClick={onCloseModal}>
             <span className="auth__btn__close__x">X</span>
           </button>
         </div>
-        {toggleSignUp ? <SignUp /> : <SignIn />}
+        {signIn && <SignIn />}
+        {signUp && <SignUp />}
+        {forgotPassword && <ForgotPassword />}
         <div className="auth__wrap__text__toggle">
           <p className="">
-            {toggleSignUp
-              ? "You already have an account ?"
-              : "You don't have an account ?"}
+            {forgotPassword && "You don't have an account ?"}
+            {signIn && " You don't have an account ?"}
+            {signUp && "You already have an account ?"}
           </p>
-          <p
-            onClick={() => setToggleSignUp(!toggleSignUp)}
-            className="auth__text__toggle__strong"
-          >
-            {toggleSignUp ? "Login" : "Register"}
-          </p>
+          {signIn && <SpanForm content={"Register"} display={"signUp"} />}
+          {signUp && <SpanForm content={"Sign In"} display={"signIn"} />}
+          {forgotPassword && (
+            <SpanForm content={"Register"} display={"signUp"} />
+          )}
         </div>
         <p>Or continue with :</p>
         <SignWithProvider />

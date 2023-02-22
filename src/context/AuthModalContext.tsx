@@ -1,8 +1,9 @@
 import { useState, useContext, createContext } from "react";
 import {
   AuthModalContextType,
-  FormDataTypes,
   AuthModalContextProviderType,
+  FormDataTypes,
+  FormsType,
 } from "./types/AuthModalTypes";
 
 const AuthModalContext = createContext({} as AuthModalContextType);
@@ -11,14 +12,40 @@ export const AuthModalContextProvider = ({
   children,
 }: AuthModalContextProviderType) => {
   const [toggleModal, setToggleModal] = useState<boolean>(false);
-  const [toggleSignUp, setToggleSignUp] = useState<boolean>(true);
   const [formData, setFormData] = useState<FormDataTypes>({
     email: "",
     password: "",
     userName: "",
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [forms, setForms] = useState<FormsType>({
+    forgotPassword: false,
+    signIn: true,
+    signUp: false,
+  });
+
+  const resetFormsToFalse = (): void => {
+    const resetToFalse = Object.fromEntries(
+      Object.entries(forms).map(([key, value]) => [key, false])
+    );
+    return setForms(resetToFalse);
+  };
+
+  const displayForm = (e: React.MouseEvent<HTMLSpanElement>): void => {
+    const { displayForm } = (e.target as HTMLSpanElement).dataset;
+    if (displayForm !== undefined)
+      setForms(prevState => ({
+        ...prevState,
+        [displayForm]: true,
+      }));
+  };
+
+  const activeForm = (e: React.MouseEvent<HTMLSpanElement>): void => {
+    resetFormsToFalse();
+    displayForm(e);
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData(prevState => ({
       ...prevState,
       [e.target.id]: e.target.value,
@@ -33,10 +60,10 @@ export const AuthModalContextProvider = ({
   const value = {
     formData,
     toggleModal,
+    forms,
+    activeForm,
     setFormData,
     setToggleModal,
-    toggleSignUp,
-    setToggleSignUp,
     onCloseModal,
     onChange,
   };

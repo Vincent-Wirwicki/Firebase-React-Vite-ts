@@ -19,3 +19,9 @@
 .form__error {
     color: red
 }
+
+.form__span {
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+}

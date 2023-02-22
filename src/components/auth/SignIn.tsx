@@ -2,10 +2,11 @@
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { AuthModal } from "../../context/AuthModalContext";
 import { auth } from "../../firebase/firebase";
+import InputForm from "./InputForm";
 import "../../styles/components/auth/form.css";
 
 const SignIn: React.FC = () => {
-  const { onCloseModal, onChange, formData } = AuthModal();
+  const { onCloseModal, formData, activeForm } = AuthModal();
   const { email, password } = formData;
 
   const [signInWithEmailAndPassword, user, loading, error] =
@@ -26,26 +27,15 @@ const SignIn: React.FC = () => {
   return (
     <form onSubmit={onSubmit} className="form">
       <h3>Log In</h3>
-      <input
-        autoComplete="true"
-        placeholder="email"
-        className="form__input"
-        value={email}
-        id="email"
-        onChange={e => onChange(e)}
-        type="text"
-        required
-      />
-      <input
-        autoComplete="true"
-        placeholder="password"
-        className="form__input"
-        value={password}
-        id="password"
-        onChange={e => onChange(e)}
-        type="password"
-        required
-      />
+      <InputForm type={"email"} value={email} />
+      <InputForm type={"password"} value={password} />
+      <span
+        className="auth__text__toggle__strong"
+        data-display-form="forgotPassword"
+        onClick={e => activeForm(e)}
+      >
+        Forgot Password ?
+      </span>
       <button type="submit">{!loading ? "Sign Up" : "loading"}</button>
       <div className="form__error">{error && <span>{error.message}</span>}</div>
     </form>

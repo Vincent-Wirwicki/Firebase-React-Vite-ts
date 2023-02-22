@@ -3,10 +3,11 @@ import { updateProfile } from "firebase/auth";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { AuthModal } from "../../context/AuthModalContext";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import InputForm from "./InputForm";
 import "../../styles/components/auth/form.css";
 
 const SignUp: React.FC = () => {
-  const { onCloseModal, onChange, formData, setToggleModal } = AuthModal();
+  const { onCloseModal, onChange, formData } = AuthModal();
   const { userName, email, password } = formData;
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
@@ -48,26 +49,8 @@ const SignUp: React.FC = () => {
         type="text"
         required
       />
-      <input
-        autoComplete="true"
-        placeholder="email"
-        className="form__input"
-        value={email}
-        id="email"
-        onChange={e => onChange(e)}
-        type="text"
-        required
-      />
-      <input
-        autoComplete="true"
-        placeholder="password"
-        className="form__input"
-        value={password}
-        id="password"
-        onChange={e => onChange(e)}
-        type="password"
-        required
-      />
+      <InputForm type={"email"} value={email} />
+      <InputForm type={"password"} value={password} />
       <button type="submit">{!loading ? "Sign Up" : "loading"}</button>
       <div className="form__error">{error && <span>{error.message}</span>}</div>
     </form>
