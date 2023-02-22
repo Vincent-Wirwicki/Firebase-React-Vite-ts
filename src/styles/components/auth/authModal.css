@@ -51,7 +51,7 @@
 
 .auth__btn__close__x {
     display: block;
-    font-weight: 600;
+    font-weight: bold;
     transition: transform 300ms ease-out
 }
 

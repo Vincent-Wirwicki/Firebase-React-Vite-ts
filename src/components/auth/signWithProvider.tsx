@@ -21,14 +21,14 @@ const SignWithProvider: React.FC = () => {
           createdAt: serverTimestamp(),
         });
       }
+      onCloseModal();
     }
   };
+
   const onSubmit = async (): Promise<void> => {
     try {
-      console.log("provider");
       await signInWithPopup(auth, new GoogleAuthProvider());
       addUserToFirestoreDB();
-      onCloseModal();
     } catch (error) {}
   };
 

@@ -1,12 +1,16 @@
 import { auth, db } from "../../firebase/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { AuthModal } from "../../context/AuthModalContext";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import "../../styles/components/auth/form.css";
 
-const SignUp: React.FC = ({}) => {
-  const { onCloseModal, setToggleSignUp, onChange, formData } = AuthModal();
+const SignUp: React.FC = () => {
+  const { onCloseModal, onChange, formData, setToggleModal } = AuthModal();
   const { userName, email, password } = formData;
+  const [createUserWithEmailAndPassword, user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
+
   const addUserToFirestoreDB = async (): Promise<void> => {
     if (auth.currentUser !== null) {
       updateProfile(auth.currentUser, { displayName: userName });
@@ -17,6 +21,7 @@ const SignUp: React.FC = ({}) => {
         photoURL: auth.currentUser.photoURL,
         createdAt: serverTimestamp(),
       });
+      onCloseModal();
     }
   };
 
@@ -25,12 +30,9 @@ const SignUp: React.FC = ({}) => {
   ): Promise<void> => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(email, password);
       addUserToFirestoreDB();
-      onCloseModal();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
@@ -66,7 +68,8 @@ const SignUp: React.FC = ({}) => {
         type="password"
         required
       />
-      <button type="submit">Sign Up</button>
+      <button type="submit">{!loading ? "Sign Up" : "loading"}</button>
+      <div className="form__error">{error && <span>{error.message}</span>}</div>
     </form>
   );
 };

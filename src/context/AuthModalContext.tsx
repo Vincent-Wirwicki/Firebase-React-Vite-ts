@@ -27,7 +27,6 @@ export const AuthModalContextProvider = ({
 
   const onCloseModal = (): void => {
     setToggleModal(false);
-    setToggleSignUp(true);
     setFormData({ email: "", password: "", userName: "" });
   };
 

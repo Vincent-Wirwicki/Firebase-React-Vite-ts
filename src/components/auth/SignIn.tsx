@@ -1,19 +1,26 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+// import { signInWithEmailAndPassword } from "firebase/auth";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { AuthModal } from "../../context/AuthModalContext";
 import { auth } from "../../firebase/firebase";
 import "../../styles/components/auth/form.css";
 
 const SignIn: React.FC = () => {
-  const { onCloseModal, setToggleSignUp, onChange, formData } = AuthModal();
+  const { onCloseModal, onChange, formData } = AuthModal();
   const { email, password } = formData;
 
-  const onSubmit = async () => {
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
+
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onCloseModal();
-    } catch (error) {
-      console.log(error);
-    }
+      await signInWithEmailAndPassword(email, password);
+      if (auth.currentUser !== null) {
+        onCloseModal();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -36,10 +43,11 @@ const SignIn: React.FC = () => {
         value={password}
         id="password"
         onChange={e => onChange(e)}
-        type="text"
+        type="password"
         required
       />
-      <button type="submit">Sign In</button>
+      <button type="submit">{!loading ? "Sign Up" : "loading"}</button>
+      <div className="form__error">{error && <span>{error.message}</span>}</div>
     </form>
   );
 };
