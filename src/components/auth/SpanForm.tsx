@@ -5,14 +5,17 @@ interface Props {
   content: string;
   display: string;
 }
-const SpanForm: React.FC<Props> = ({ display, content }) => {
-  const { activeForm } = AuthModal();
+const SpanForm: React.FC<Props> = ({ content, display }) => {
+  const { activeForm, setFormData } = AuthModal();
 
   return (
     <span
       className="form__span"
       data-display-form={display}
-      onClick={e => activeForm(e)}
+      onClick={e => {
+        activeForm(e);
+        setFormData({ email: "", password: "", userName: "" });
+      }}
     >
       {content}
     </span>

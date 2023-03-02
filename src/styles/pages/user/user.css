@@ -1,0 +1,28 @@
+.user__page__container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.user__page__wrap__info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 300px;
+}
+
+.user__page__delete__account {
+    height: 150px;
+    display: flex;
+    width: 300px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.user__page__delete__account__toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}

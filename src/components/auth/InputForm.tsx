@@ -24,13 +24,3 @@ const InputForm: React.FC<Props> = ({ type, value }) => {
 };
 
 export default InputForm;
-//   <input
-//     autoComplete="true" -
-//     placeholder="email"
-//     className="form__input"
-//     value={email}
-//     id="email"
-//     onChange={e => onChange(e)}
-//     type="email"
-//     required
-//   />;

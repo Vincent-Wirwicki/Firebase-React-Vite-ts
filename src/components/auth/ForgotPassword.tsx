@@ -2,39 +2,27 @@ import { AuthModal } from "../../context/AuthModalContext";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import "../../styles/components/auth/form.css";
+import InputForm from "./InputForm";
+import { useState } from "react";
 
 const ForgotPassword = () => {
-  const { onChange, formData } = AuthModal();
+  const { formData } = AuthModal();
   const { email } = formData;
+  const [message, setMessage] = useState<string>("");
   const onSubmit = async () => {
     try {
       await sendPasswordResetEmail(auth, email);
-    } catch (error) {}
+      setMessage("An email was send");
+    } catch (error) {
+      setMessage("email do not exist");
+    }
   };
 
   return (
     <form onSubmit={onSubmit} className="form">
       <h3>Forgot Password</h3>
-      <input
-        autoComplete="true"
-        placeholder="email"
-        className="form__input"
-        value={email}
-        id="email"
-        onChange={e => onChange(e)}
-        type="text"
-        required
-      />
-      {/* <input
-        autoComplete="true"
-        placeholder="password"
-        className="form__input"
-        value={password}
-        id="password"
-        onChange={e => onChange(e)}
-        type="password"
-        required
-      /> */}
+      <InputForm type={"email"} value={email} />
+      <p>{message.length > 0 && message}</p>
       <button type="submit">Reset Password</button>
     </form>
   );

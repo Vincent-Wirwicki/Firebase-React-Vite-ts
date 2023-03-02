@@ -9,13 +9,17 @@ import "../../styles/components/auth/authModal.css";
 import "../../styles/components/auth/form.css";
 
 const ModalAuth: React.FC = () => {
-  const { toggleModal, onCloseModal, forms, activeForm } = AuthModal();
-
+  const { toggleModal, onCloseModal, forms } = AuthModal();
   const { signIn, signUp, forgotPassword } = forms;
 
   if (auth.currentUser !== null) {
     return <></>;
   }
+
+  const messages = {
+    haveAccount: "You already have an account ?",
+    noAccount: "You don't have an account ?",
+  };
 
   return (
     <div className={`auth__modal ${toggleModal ? "show" : "hide"}`}>
@@ -30,15 +34,15 @@ const ModalAuth: React.FC = () => {
         {forgotPassword && <ForgotPassword />}
         <div className="auth__wrap__text__toggle">
           <p className="">
-            {forgotPassword && "You don't have an account ?"}
-            {signIn && " You don't have an account ?"}
-            {signUp && "You already have an account ?"}
+            {forgotPassword && messages.noAccount}
+            {signIn && messages.noAccount}
+            {signUp && messages.haveAccount}
           </p>
-          {signIn && <SpanForm content={"Register"} display={"signUp"} />}
-          {signUp && <SpanForm content={"Sign In"} display={"signIn"} />}
           {forgotPassword && (
             <SpanForm content={"Register"} display={"signUp"} />
           )}
+          {signIn && <SpanForm content={"Register"} display={"signUp"} />}
+          {signUp && <SpanForm content={"Sign In"} display={"signIn"} />}
         </div>
         <p>Or continue with :</p>
         <SignWithProvider />
