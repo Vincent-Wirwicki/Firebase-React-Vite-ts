@@ -4,8 +4,6 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,9 +12,15 @@
   -webkit-text-size-adjust: 100%;
 
   --color-blue-green: #6DF2C1;
+  --color-flash-green: #05F283;
   --color-light-white: #F2ECE9;
   --color-black: #0D0D0D;
   --color-dark-grey: #403F3E;
+
+  --text-color-dark: var(--color-black);
+  --text-color-light: var(--color-light-white);
+  --background-color: var(--color-black);
+
 }
 
 html,

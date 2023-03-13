@@ -10,6 +10,7 @@ import { auth } from "../../firebase/firebase";
 import { Navigate } from "react-router-dom";
 import DeleteUser from "./DeleteUser";
 import "../../styles/pages/user/user.css";
+import PostEvent from "./PostEvent";
 
 const User = () => {
   const [user, error, loading] = useAuthState(auth);
@@ -25,26 +26,20 @@ const User = () => {
 
   if (!user) {
     return (
-      <div>
+      <>
         <Navigate to="/" />
-      </div>
+      </>
     );
   }
 
   return (
     <div className="user__page__container">
-      <button
-        onClick={() => {
-          setEditing(!editing);
-        }}
-      >
-        Edit profile
-      </button>
+      <PostEvent />
       <div className="user__page__wrap__info">
-        <div className="user__page__info__data__title">Display name:</div>
-        <div className="user__page__info__data__text">{user.displayName}</div>
-        <div className="user__page__info__data__title">Email</div>
-        <div className="user__page__info__data__text">{user.email}</div>
+        <p className="user__page__info__data__title">Display name:</p>
+        <h3 className="user__page__info__data__text">{user.displayName}</h3>
+        <p className="user__page__info__data__title">Email</p>
+        <h3 className="user__page__info__data__text">{user.email}</h3>
         {/* <div className="user__page__info__data__text">{user?.uid}</div> */}
       </div>
       <div className="user__page__wrap__info__edit">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { deleteUser, signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
+import { deleteUser } from "firebase/auth";
+import { deleteDoc, doc } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebase";
 import useDebounce from "../../hooks/useDebounce";
 import "../../styles/pages/user/deleteUser.css";
 
@@ -13,17 +14,17 @@ const DeleteUser: React.FC<Props> = ({ email }) => {
   const [isEmailConfirm, setIsEmailConfirm] = useState<boolean>(false);
   const [confirmEmail, setConfirmEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const debouncedValue = useDebounce<string>(confirmEmail, 500);
+  const debouncedValue = useDebounce<string>(confirmEmail, 300);
 
   useEffect(() => {
     confirmEmail === email ? setIsEmailConfirm(true) : setIsEmailConfirm(false);
   }, [debouncedValue]);
 
   const onDelete = async () => {
-    if (auth.currentUser) {
+    if (auth.currentUser !== null) {
       try {
+        await deleteDoc(doc(db, "users", auth.currentUser.uid));
         await deleteUser(auth.currentUser);
-        // await signOut(auth);
       } catch (error) {}
     }
   };

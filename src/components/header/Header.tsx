@@ -22,12 +22,12 @@ const Header: React.FC<Props> = () => {
       {!user ? (
         <button onClick={() => setToggleModal(true)}>Sign Up / Sign In</button>
       ) : (
-        <div>
+        <nav>
           <Link to="/user" className="link__style">
-            {user.displayName}
+            my account
           </Link>
           <div onClick={() => signOut(auth)}>logout</div>
-        </div>
+        </nav>
       )}
     </header>
   );

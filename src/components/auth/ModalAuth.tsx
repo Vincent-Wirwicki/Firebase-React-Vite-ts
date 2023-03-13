@@ -12,21 +12,21 @@ const ModalAuth: React.FC = () => {
   const { toggleModal, onCloseModal, forms } = AuthModal();
   const { signIn, signUp, forgotPassword } = forms;
 
-  if (auth.currentUser !== null) {
-    return <></>;
-  }
-
   const messages = {
     haveAccount: "You already have an account ?",
     noAccount: "You don't have an account ?",
   };
+
+  if (auth.currentUser !== null) {
+    return <></>;
+  }
 
   return (
     <div className={`auth__modal ${toggleModal ? "show" : "hide"}`}>
       <div className="auth__wrap">
         <div className="auth__wrap__btn__close">
           <button className="auth__btn__close" onClick={onCloseModal}>
-            <span className="auth__btn__close__x">X</span>
+            <span className="auth__btn__close__x">+</span>
           </button>
         </div>
         {signIn && <SignIn />}

@@ -35,10 +35,6 @@
     transform: rotate(45deg);
 }
 
-.delete__user__input {
-    border: solid black 2px
-}
-
 .delete__user__input__confirm {
     border: solid green 2px
 }

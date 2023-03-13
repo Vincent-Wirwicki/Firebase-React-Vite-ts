@@ -10,7 +10,7 @@
 .user__page__wrap__info {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    width: 300px;
+    width: 600px;
 }
 
 .user__page__delete__account {

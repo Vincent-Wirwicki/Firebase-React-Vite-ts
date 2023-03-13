@@ -9,15 +9,15 @@ const SignWithProvider: React.FC = () => {
   const addUserToFirestoreDB = async (): Promise<void> => {
     if (auth.currentUser !== null) {
       const {
-        currentUser: { uid, email, displayName, photoURL },
+        currentUser: { uid, email, displayName: userName, photoURL },
       } = auth;
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
         await setDoc(docRef, {
-          email: email,
-          userName: displayName,
-          photoURL: photoURL,
+          email,
+          userName,
+          photoURL,
           createdAt: serverTimestamp(),
         });
       }
