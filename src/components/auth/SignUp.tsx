@@ -19,6 +19,10 @@ const SignUp: React.FC = () => {
       await setDoc(docRef, {
         email,
         userName,
+        city: "none",
+        country: "none",
+        social: "none",
+        bio: "none",
         photoURL: auth.currentUser.photoURL,
         createdAt: serverTimestamp(),
       });

@@ -4,7 +4,7 @@ header {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    height: 10%;
+    height: 80px;
     display: flex;
     justify-content: space-between;
     padding: 1rem;
@@ -15,5 +15,5 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    width: 10%;
+    width: 30%;
 }

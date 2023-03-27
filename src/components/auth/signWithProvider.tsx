@@ -18,6 +18,10 @@ const SignWithProvider: React.FC = () => {
           email,
           userName,
           photoURL,
+          city: "none",
+          country: "none",
+          social: "none",
+          bio: "none",
           createdAt: serverTimestamp(),
         });
       }

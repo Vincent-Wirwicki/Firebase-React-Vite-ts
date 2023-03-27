@@ -13,6 +13,7 @@ import Root from "./pages/root/Root";
 import Home from "./pages/home/Home";
 import User from "./pages/user/User";
 import ProtectedRoutes from "./components/utils/ProtectedRoutes";
+import CreatePost from "./pages/post/CreatePost";
 
 const App = () => {
   const [user, error, loading] = useAuthState(auth);
@@ -23,6 +24,9 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="/user" element={<ProtectedRoutes />}>
           <Route path="/user" element={<User />} />
+        </Route>
+        <Route path="/post" element={<ProtectedRoutes />}>
+          <Route path="/post" element={<CreatePost />} />
         </Route>
         <Route path="/*" element={<ErrorPage />} />
       </Route>

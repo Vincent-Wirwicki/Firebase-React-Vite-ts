@@ -23,6 +23,9 @@ const Header: React.FC<Props> = () => {
         <button onClick={() => setToggleModal(true)}>Sign Up / Sign In</button>
       ) : (
         <nav>
+          <Link to="/post" className="link__style">
+            Post you photo
+          </Link>
           <Link to="/user" className="link__style">
             my account
           </Link>

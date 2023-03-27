@@ -1,0 +1,22 @@
+.post__wrap {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post__form {
+    min-width: 320px;
+    max-width: 720px;
+    height: fit-content;
+}
+
+.post__tag__wrap {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post__tag__input {
+    width: 50%
+}
