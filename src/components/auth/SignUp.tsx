@@ -17,12 +17,13 @@ const SignUp: React.FC = () => {
       updateProfile(auth.currentUser, { displayName: userName });
       const docRef = doc(db, "users", auth.currentUser.uid);
       await setDoc(docRef, {
+        uid: auth.currentUser.uid,
         email,
         userName,
-        city: "none",
-        country: "none",
-        social: "none",
-        bio: "none",
+        city: "unknown",
+        country: "unknown",
+        social: "unknown",
+        bio: "unknown",
         photoURL: auth.currentUser.photoURL,
         createdAt: serverTimestamp(),
       });

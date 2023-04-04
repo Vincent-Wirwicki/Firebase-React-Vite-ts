@@ -15,13 +15,14 @@ const SignWithProvider: React.FC = () => {
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
         await setDoc(docRef, {
+          uid: auth.currentUser.uid,
           email,
           userName,
           photoURL,
-          city: "none",
-          country: "none",
-          social: "none",
-          bio: "none",
+          city: "unknown",
+          country: "unknown",
+          social: "unknown",
+          bio: "unknown",
           createdAt: serverTimestamp(),
         });
       }

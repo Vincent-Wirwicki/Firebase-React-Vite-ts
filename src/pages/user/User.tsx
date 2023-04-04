@@ -11,13 +11,7 @@ import { Navigate } from "react-router-dom";
 import DeleteUser from "./DeleteUser";
 import "../../styles/pages/user/user.css";
 import { doc, getDoc, DocumentData } from "firebase/firestore";
-
-interface userRef {
-  bio: string;
-  city: string;
-  country: string;
-  email: string;
-}
+import EditUser from "./EditUser";
 
 const User = () => {
   const [user, error, loading] = useAuthState(auth);
@@ -31,11 +25,21 @@ const User = () => {
   // updateEmail(auth.currentUser, "user@example.com");
   // updatePassword(user, newPassword);
   // deleteUser(user);
+
+  interface userRefType {
+    uid: string;
+    bio: string;
+    city: string;
+    country: string;
+    userName: string;
+    social: string;
+  }
+
   const getUserRef = async () => {
     if (user) {
       const docRef = doc(db, "users", user.uid);
       const dataRef = await getDoc(docRef);
-      return dataRef.data();
+      return dataRef.data() as userRefType;
     }
   };
 
@@ -44,6 +48,7 @@ const User = () => {
       try {
         const dataRef = await getUserRef();
         setUserRef(dataRef);
+        console.log(dataRef);
       } catch (error) {}
     };
     fetchUserRef();
@@ -63,19 +68,33 @@ const User = () => {
         <div className="user__page__wrap__info">
           <img className="user__page__info__data__photo" alt="photo" />
           <div>
-            <h3 className="user__page__info__data__text">{user.displayName}</h3>
             <h3 className="user__page__info__data__text">
               {userRef?.userName}
             </h3>
+            <p className="user__page__info__data__text">{userRef?.bio}</p>
+            <h3 className="user__page__info__data__text">
+              {userRef?.country} - {userRef?.city}
+            </h3>
+            <h3 className="user__page__info__data__text">{userRef?.city}</h3>
+            <h3 className="user__page__info__data__text">{userRef?.social}</h3>
           </div>
           {/* <div className="user__page__info__data__text">{user?.uid}</div> */}
         </div>
         <div className="user__page__wrap__info__edit">
-          <input type="email" />
+          {userRef &&
+          auth.currentUser &&
+          userRef.uid === auth.currentUser.uid ? (
+            <button onClick={() => setEditing(true)}>Edit</button>
+          ) : null}
+          {editing && userRef !== undefined ? (
+            <EditUser setEditing={setEditing} userRef={userRef} />
+          ) : null}
         </div>
-        <DeleteUser email={user.email} />
-        <div>photos</div>
-        <div>likes</div>
+        {/* <DeleteUser email={user.email} /> */}
+        <div className="user__page__wrap__post__likes">
+          <div>photos</div>
+          <div>likes</div>
+        </div>
       </div>
     </div>
   );

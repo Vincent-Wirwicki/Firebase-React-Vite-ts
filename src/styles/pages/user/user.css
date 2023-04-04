@@ -5,7 +5,7 @@
     /* justify-content: center; */
     align-items: center;
     flex-direction: column;
-    padding-top: 100px;
+    padding-top: 150px;
 }
 
 .user__wrap {
@@ -41,5 +41,12 @@
 .user__page__delete__account__toggle {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
+}
+
+.user__page__wrap__post__likes {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
     align-items: baseline;
 }
