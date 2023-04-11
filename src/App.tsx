@@ -28,6 +28,8 @@ const App = () => {
         <Route path="/post" element={<ProtectedRoutes />}>
           <Route path="/post" element={<CreatePost />} />
         </Route>
+        {/* <Route path="/photo/:uid" element={<CreatePost />} /> */}
+
         <Route path="/*" element={<ErrorPage />} />
       </Route>
     )

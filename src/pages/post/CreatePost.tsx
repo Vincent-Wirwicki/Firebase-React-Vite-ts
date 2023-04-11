@@ -1,5 +1,5 @@
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import "../../styles/components/auth/form.css";
 import "../../styles/pages/post/post.css";
@@ -10,23 +10,14 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 
+import Input from "../../components/ui/Input";
+
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [tag, setTag] = useState<string>("");
   const [tags, setTags] = useState<Array<string>>([]);
   const [image, setImage] = useState<FileList | null>();
-  const [url, setUrl] = useState<string>("");
-  const [uploadError, setUploadError] = useState<string>();
-  const [isUploadError, setIsUploadError] = useState<boolean>(false);
-  const [isUploadSuccess, setIsUploadSuccess] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
-
-  interface dataFType {
-    description: string;
-    title: string;
-    tag: Array<string>;
-  }
 
   const onAddTag = () => {
     if (tags.length < 7 && tag.length > 3) {
@@ -46,46 +37,55 @@ const CreatePost = () => {
     }
   };
 
-  const uploadImage = () => {
+  const generateRandomString = () => {
+    const charSet =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = Math.floor(Math.random() * (12 - 8 + 1) + 8);
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += charSet.charAt(Math.floor(Math.random() * charSet.length));
+    }
+    return result;
+  };
+
+  const uploadImage = async () => {
     if (image) {
-      setIsUploadSuccess(false);
-      const store = getStorage();
-      const fileName = `${image[0].name}--`;
-      const storeRef = ref(store, `images/${fileName}`);
-      const uploadTask = uploadBytesResumable(storeRef, image[0]);
-      uploadTask.on(
-        "state_changed",
-        snapshot => {
-          // Observe state change events such as progress, pause, and resume
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          setProgress(progress);
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
+      return new Promise((resolve, reject) => {
+        const store = getStorage();
+        const fileName = `${generateRandomString()}-${image[0].name}`;
+        const storeRef = ref(store, `images/${fileName}`);
+        const uploadTask = uploadBytesResumable(storeRef, image[0]);
+        uploadTask.on(
+          "state_changed",
+          snapshot => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            // console.log("Upload is " + progress + "% done");
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+            }
+          },
+          error => {
+            reject(error);
+            return;
+            // Handle unsuccessful uploads
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+              resolve(downloadURL);
+            });
           }
-        },
-        error => {
-          setIsUploadSuccess(false);
-          // reject(error);
-          // Handle unsuccessful uploads
-        },
-        () => {
-          // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-            setUrl(downloadURL);
-            setIsUploadSuccess(true);
-            // resolve(downloadURL);
-          });
-        }
-      );
+        );
+      });
     }
   };
 
@@ -95,9 +95,8 @@ const CreatePost = () => {
     e.preventDefault();
     try {
       if (auth.currentUser) {
-        // const docRef = doc(db, "events");
-        uploadImage();
-        await addDoc(collection(db, "posts"), {
+        const url = await uploadImage();
+        await addDoc(collection(db, "photos"), {
           author: auth.currentUser.displayName,
           authorId: auth.currentUser.uid,
           title,
@@ -111,36 +110,37 @@ const CreatePost = () => {
     } catch (error) {}
   };
 
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTitle(e.target.value);
+
+  const onChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setDescription(e.target.value);
+
+  const onChangeTag = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTag(e.target.value);
+
   return (
     <div className="post__wrap">
       <form className="post__form" onSubmit={onSubmit}>
         Post your photo
-        <input
+        <Input
+          value={title}
           type="text"
-          placeholder="title"
-          className="form__input"
-          onChange={e => setTitle(e.target.value)}
-          required
-          minLength={6}
-          maxLength={60}
+          placeHolder={"title"}
+          onChange={onChangeTitle}
         />
-        <input
+        <Input
+          value={description}
           type="text"
-          placeholder="description"
-          className="form__input"
-          onChange={e => setDescription(e.target.value)}
-          required
+          placeHolder={"description"}
+          onChange={onChangeDescription}
         />
         <div className="post__tag__wrap">
-          <input
-            type="text"
+          <Input
             value={tag}
-            onChange={e => {
-              setTag(e.target.value);
-            }}
-            placeholder="tags"
-            className="form__input post__tag__input"
-            // required
+            type="text"
+            placeHolder={"tag"}
+            onChange={onChangeTag}
           />
           <button type="button" onClick={onAddTag}>
             +

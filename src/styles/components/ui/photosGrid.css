@@ -1,0 +1,25 @@
+.photo__grid__wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+}
+
+.photo__grid__layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 0.8rem;
+}
+
+.photo__grid__card {
+    height: auto;
+    width: 100%;
+    /* overflow: hidden; */
+}
+
+.photo__grid__card__img {
+    /* aspect-ratio: 3/2; */
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+}

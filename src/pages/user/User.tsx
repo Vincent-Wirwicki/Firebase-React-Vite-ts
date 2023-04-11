@@ -12,6 +12,7 @@ import DeleteUser from "./DeleteUser";
 import "../../styles/pages/user/user.css";
 import { doc, getDoc, DocumentData } from "firebase/firestore";
 import EditUser from "./EditUser";
+import UserPhotos from "./UserPhotos";
 
 const User = () => {
   const [user, error, loading] = useAuthState(auth);
@@ -48,7 +49,7 @@ const User = () => {
       try {
         const dataRef = await getUserRef();
         setUserRef(dataRef);
-        console.log(dataRef);
+        // console.log(dataRef);
       } catch (error) {}
     };
     fetchUserRef();
@@ -95,6 +96,7 @@ const User = () => {
           <div>photos</div>
           <div>likes</div>
         </div>
+        <UserPhotos />
       </div>
     </div>
   );
