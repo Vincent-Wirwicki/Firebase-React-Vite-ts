@@ -3,6 +3,7 @@
     justify-content: center;
     width: 100%;
     height: fit-content;
+    padding: 0.5rem;
 }
 
 .photo__grid__layout {
@@ -22,4 +23,5 @@
     height: auto;
     width: 100%;
     object-fit: cover;
+
 }

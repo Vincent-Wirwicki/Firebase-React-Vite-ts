@@ -10,41 +10,30 @@ import {
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import PhotosGrid from "../../components/ui/PhotosGrid";
+import { PhotoDataType, DocPhotosType } from "../../types/Types";
 
-interface photoType {
-  author: string;
-  authorId: string;
-  description: string;
-  title: string;
-  url: string;
-  likes: number;
-  tags: [];
-  createdAt: Timestamp;
+interface Props {
+  userRef: string;
 }
 
-interface docDataType {
-  id: string;
-  data: photoType;
-}
-
-const UserPhotos = () => {
-  const [photos, setPhotos] = useState<Array<docDataType> | undefined>([]);
+const UserPhotos: React.FC<Props> = ({ userRef }) => {
+  const [photos, setPhotos] = useState<Array<DocPhotosType> | undefined>([]);
 
   useEffect(() => {
     const getUserPhotos = async () => {
-      if (auth.currentUser) {
+      if (userRef) {
         const photosRef = collection(db, "photos");
         const q = query(
           photosRef,
-          where("authorId", "==", auth.currentUser.uid),
+          where("authorId", "==", userRef),
           orderBy("createdAt", "desc")
         );
         const querySnapshot = await getDocs(q);
-        const photos: Array<docDataType> = [];
+        const photos: Array<DocPhotosType> = [];
         querySnapshot.forEach(doc => {
           return photos.push({
             id: doc.id,
-            data: doc.data() as photoType,
+            data: doc.data() as PhotoDataType,
           });
         });
         setPhotos(photos);
@@ -56,20 +45,11 @@ const UserPhotos = () => {
 
   return (
     <div>
-      {/* <h1> hello im user photos</h1> */}
-      <div>
-        {photos ? (
-          <PhotosGrid photos={photos} />
-        ) : (
-          <div>there is nothing here</div>
-        )}
-
-        {/* {photos ? (
-          photos.map(p => <div key={p.id}>{p.data()}</div>)
-        ) : (
-          <div> something went wrong</div>
-        )} */}
-      </div>
+      {photos ? (
+        <PhotosGrid photos={photos} />
+      ) : (
+        <div>there is nothing here</div>
+      )}
     </div>
   );
 };

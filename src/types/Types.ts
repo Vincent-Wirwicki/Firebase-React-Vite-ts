@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-export interface PhotoType {
+export interface PhotoDataType {
   author: string;
   authorId: string;
   description: string;
@@ -8,15 +8,15 @@ export interface PhotoType {
   url: string;
   likes: number;
   tags: [];
-  createdAt: { nanoseconds: number; seconds: number };
+  createdAt: Timestamp;
 }
 
-export interface DocPhotos {
+export interface DocPhotosType {
   id: string;
-  data: PhotoType;
+  data: PhotoDataType;
 }
 
-export interface user {
+export interface UserRefType {
   bio: string;
   city: string;
   country: string;

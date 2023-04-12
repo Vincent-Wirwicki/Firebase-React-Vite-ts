@@ -5,6 +5,7 @@ import { AuthModal } from "../../context/AuthModalContext";
 import { auth } from "../../firebase/firebase";
 import "../../styles/components/header/header.css";
 import { Link } from "react-router-dom";
+import { AppBar } from "@mui/material";
 
 interface Props {}
 
@@ -12,7 +13,6 @@ const Header: React.FC<Props> = () => {
   const { setToggleModal } = AuthModal();
   const [user, error, loading] = useAuthState(auth);
 
-  console.log(auth.currentUser);
   return (
     <header>
       <Link to="/" className="link__style">
@@ -23,10 +23,10 @@ const Header: React.FC<Props> = () => {
         <button onClick={() => setToggleModal(true)}>Sign Up / Sign In</button>
       ) : (
         <nav>
-          <Link to="/post" className="link__style">
-            Post you photo
+          <Link to="/createPost" className="link__style">
+            Post a photo
           </Link>
-          <Link to="/user" className="link__style">
+          <Link to={`/user/${user.uid}`} className="link__style">
             my account
           </Link>
           <div onClick={() => signOut(auth)}>logout</div>

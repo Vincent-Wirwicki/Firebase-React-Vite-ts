@@ -7,40 +7,25 @@ import {
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/firebase";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import DeleteUser from "./DeleteUser";
 import "../../styles/pages/user/user.css";
 import { doc, getDoc, DocumentData } from "firebase/firestore";
 import EditUser from "./EditUser";
 import UserPhotos from "./UserPhotos";
+import { UserRefType } from "../../types/Types";
 
 const User = () => {
   const [user, error, loading] = useAuthState(auth);
   const [userRef, setUserRef] = useState<DocumentData>();
   const [editing, setEditing] = useState<boolean>(false);
-
-  // updateProfile(auth.currentUser, {
-  //   displayName: "Jane Q. User",
-  //   photoURL: "https://example.com/jane-q-user/profile.jpg",
-  // });
-  // updateEmail(auth.currentUser, "user@example.com");
-  // updatePassword(user, newPassword);
-  // deleteUser(user);
-
-  interface userRefType {
-    uid: string;
-    bio: string;
-    city: string;
-    country: string;
-    userName: string;
-    social: string;
-  }
+  const { uid } = useParams();
 
   const getUserRef = async () => {
-    if (user) {
-      const docRef = doc(db, "users", user.uid);
+    if (uid) {
+      const docRef = doc(db, "users", uid);
       const dataRef = await getDoc(docRef);
-      return dataRef.data() as userRefType;
+      return dataRef.data() as UserRefType;
     }
   };
 
@@ -49,7 +34,6 @@ const User = () => {
       try {
         const dataRef = await getUserRef();
         setUserRef(dataRef);
-        // console.log(dataRef);
       } catch (error) {}
     };
     fetchUserRef();
@@ -87,7 +71,7 @@ const User = () => {
           userRef.uid === auth.currentUser.uid ? (
             <button onClick={() => setEditing(true)}>Edit</button>
           ) : null}
-          {editing && userRef !== undefined ? (
+          {editing && userRef ? (
             <EditUser setEditing={setEditing} userRef={userRef} />
           ) : null}
         </div>
@@ -96,7 +80,7 @@ const User = () => {
           <div>photos</div>
           <div>likes</div>
         </div>
-        <UserPhotos />
+        {userRef ? <UserPhotos userRef={userRef.uid} /> : null}
       </div>
     </div>
   );

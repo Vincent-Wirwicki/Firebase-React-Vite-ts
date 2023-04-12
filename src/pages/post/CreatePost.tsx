@@ -1,5 +1,5 @@
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { Component, useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import "../../styles/components/auth/form.css";
 import "../../styles/pages/post/post.css";
@@ -9,8 +9,9 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
-
-import Input from "../../components/ui/Input";
+import { PhotoDataType } from "../../types/Types";
+import { TextField, Button, Box, Stack, IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
@@ -18,20 +19,36 @@ const CreatePost = () => {
   const [tag, setTag] = useState<string>("");
   const [tags, setTags] = useState<Array<string>>([]);
   const [image, setImage] = useState<FileList | null>();
+  const [formRules, setFormRules] = useState({
+    isInputValide: false,
+  });
+
+  const checkInput = (
+    value: string,
+    minLength: number,
+    maxLength: number,
+    reg?: RegExp
+  ) => {
+    const [isValid, setIsValid] = useState(false);
+    value.length > minLength && value.length < maxLength
+      ? setIsValid(true)
+      : setIsValid(false);
+    return [isValid];
+  };
 
   const onAddTag = () => {
-    if (tags.length < 7 && tag.length > 3) {
+    if (tags.length < 20 && tag.length > 3) {
       setTags(prevState => [...prevState, tag]);
       setTag("");
     } else {
     }
   };
 
-  const onRemoveTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
+  const onRemoveTag = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (tags.length > 0) {
       setTags(prevState => [
         ...prevState.filter(
-          tag => tag !== (e.target as HTMLParagraphElement).textContent
+          tag => tag !== (e.target as HTMLButtonElement).textContent
         ),
       ]);
     }
@@ -57,21 +74,21 @@ const CreatePost = () => {
         const uploadTask = uploadBytesResumable(storeRef, image[0]);
         uploadTask.on(
           "state_changed",
-          snapshot => {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            // console.log("Upload is " + progress + "% done");
-            switch (snapshot.state) {
-              case "paused":
-                console.log("Upload is paused");
-                break;
-              case "running":
-                console.log("Upload is running");
-                break;
-            }
-          },
+          // snapshot => {
+          //   // Observe state change events such as progress, pause, and resume
+          //   // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          //   const progress =
+          //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          //   // console.log("Upload is " + progress + "% done");
+          //   switch (snapshot.state) {
+          //     case "paused":
+          //       console.log("Upload is paused" + progress);
+          //       break;
+          //     case "running":
+          //       console.log("Upload is running" + progress);
+          //       break;
+          //   }
+          // },
           error => {
             reject(error);
             return;
@@ -95,6 +112,7 @@ const CreatePost = () => {
     e.preventDefault();
     try {
       if (auth.currentUser) {
+        console.log("ghakofakpozkf");
         const url = await uploadImage();
         await addDoc(collection(db, "photos"), {
           author: auth.currentUser.displayName,
@@ -105,9 +123,11 @@ const CreatePost = () => {
           tags: tags,
           likes: 0,
           url,
-        });
+        } as PhotoDataType);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -119,58 +139,90 @@ const CreatePost = () => {
   const onChangeTag = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTag(e.target.value);
 
+  // if(!auth.currentUser){
+  //   ret
+  // }
+
   return (
     <div className="post__wrap">
-      <form className="post__form" onSubmit={onSubmit}>
-        Post your photo
-        <Input
-          value={title}
-          type="text"
-          placeHolder={"title"}
-          onChange={onChangeTitle}
-        />
-        <Input
-          value={description}
-          type="text"
-          placeHolder={"description"}
-          onChange={onChangeDescription}
-        />
-        <div className="post__tag__wrap">
-          <Input
-            value={tag}
+      <Box component="form" onSubmit={onSubmit}>
+        <Stack spacing={2}>
+          Post your photo
+          <TextField
+            id="outlined-basic"
+            label="title"
+            variant="outlined"
             type="text"
-            placeHolder={"tag"}
-            onChange={onChangeTag}
+            placeholder="title"
+            onChange={onChangeTitle}
+            required
           />
-          <button type="button" onClick={onAddTag}>
-            +
-          </button>
-        </div>
-        {tags.length > 0 ? (
-          <div>
-            {tags.map((t, i) => (
-              <p key={i} onClick={onRemoveTag}>
-                {t}
-              </p>
-            ))}
-          </div>
-        ) : (
-          <div>no tag</div>
-        )}
-        {/* <button type="submit">submit</button> */}
-        <input
-          type="file"
-          onChange={e => {
-            const file = e.target.files;
-            if (file) {
-              setImage(file);
-            }
-          }}
-          accept=".jpg,.png,.jpeg"
-          maxLength={1}
-        />
-        <button>submit</button>
-      </form>
+          <TextField
+            id="outlined-basic"
+            label="description"
+            variant="outlined"
+            type="text"
+            placeholder="description"
+            onChange={onChangeDescription}
+            value={description}
+            multiline
+          />
+          <Stack direction="row" spacing={2}>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              type="text"
+              label="tag"
+              placeholder="tag"
+              value={tag}
+              onChange={onChangeTag}
+            />
+            <Button
+              onClick={onAddTag}
+              startIcon={<AddIcon />}
+              component="button"
+            >
+              add tag
+            </Button>
+          </Stack>
+          {tags.length > 0 ? (
+            <Stack direction="row" spacing={1}>
+              {tags.map((t, i) => (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  key={i}
+                  onClick={onRemoveTag}
+                >
+                  {t}
+                </Button>
+              ))}
+            </Stack>
+          ) : (
+            <div>no tag</div>
+          )}
+          {/* <button type="submit">submit</button> */}
+          <Button variant="outlined" component="label">
+            Upload
+            <input
+              style={{ display: "none" }}
+              accept=".jpg,.png,.jpeg"
+              maxLength={1}
+              type="file"
+              onChange={e => {
+                const file = e.target.files;
+                if (file && file.length === 1) {
+                  console.log(file);
+                  setImage(file);
+                }
+              }}
+            />
+          </Button>
+          <Button variant="contained" type="submit">
+            Submit
+          </Button>
+        </Stack>
+      </Box>
     </div>
   );
 };
