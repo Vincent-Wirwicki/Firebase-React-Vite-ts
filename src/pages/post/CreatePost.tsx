@@ -1,8 +1,6 @@
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { Component, useState } from "react";
+import { useState } from "react";
 import { auth, db } from "../../firebase/firebase";
-import "../../styles/components/auth/form.css";
-import "../../styles/pages/post/post.css";
 import {
   ref,
   getStorage,
@@ -10,10 +8,17 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { PhotoDataType } from "../../types/Types";
-import { TextField, Button, Box, Stack, IconButton } from "@mui/material";
+// import { Stack, Chip } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import { Navigate } from "react-router-dom";
 
 const CreatePost = () => {
+  // const navigate = useNavigate();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [tag, setTag] = useState<string>("");
@@ -23,18 +28,18 @@ const CreatePost = () => {
     isInputValide: false,
   });
 
-  const checkInput = (
-    value: string,
-    minLength: number,
-    maxLength: number,
-    reg?: RegExp
-  ) => {
-    const [isValid, setIsValid] = useState(false);
-    value.length > minLength && value.length < maxLength
-      ? setIsValid(true)
-      : setIsValid(false);
-    return [isValid];
-  };
+  // const checkInput = (
+  //   value: string,
+  //   minLength: number,
+  //   maxLength: number,
+  //   reg?: RegExp
+  // ) => {
+  //   const [isValid, setIsValid] = useState(false);
+  //   value.length > minLength && value.length < maxLength
+  //     ? setIsValid(true)
+  //     : setIsValid(false);
+  //   return [isValid];
+  // };
 
   const onAddTag = () => {
     if (tags.length < 20 && tag.length > 3) {
@@ -112,7 +117,6 @@ const CreatePost = () => {
     e.preventDefault();
     try {
       if (auth.currentUser) {
-        console.log("ghakofakpozkf");
         const url = await uploadImage();
         await addDoc(collection(db, "photos"), {
           author: auth.currentUser.displayName,
@@ -139,9 +143,9 @@ const CreatePost = () => {
   const onChangeTag = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTag(e.target.value);
 
-  // if(!auth.currentUser){
-  //   ret
-  // }
+  if (!auth.currentUser) {
+    return <Navigate to="/auth/signup" />;
+  }
 
   return (
     <div className="post__wrap">
@@ -191,6 +195,7 @@ const CreatePost = () => {
                 <Button
                   variant="outlined"
                   size="small"
+                  startIcon={<CloseIcon />}
                   key={i}
                   onClick={onRemoveTag}
                 >
@@ -201,7 +206,6 @@ const CreatePost = () => {
           ) : (
             <div>no tag</div>
           )}
-          {/* <button type="submit">submit</button> */}
           <Button variant="outlined" component="label">
             Upload
             <input
