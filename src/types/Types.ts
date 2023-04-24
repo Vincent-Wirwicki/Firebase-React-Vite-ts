@@ -7,7 +7,7 @@ export interface PhotoDataType {
   title: string;
   url: string;
   likes: number;
-  tags: [];
+  tags: string[];
   createdAt: Timestamp;
 }
 

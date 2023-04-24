@@ -40,17 +40,16 @@ const UserPhotos: React.FC<Props> = ({ userRef }) => {
       }
     };
     getUserPhotos();
-    console.log(photos);
   }, []);
 
   return (
-    <div>
+    <>
       {photos ? (
         <PhotosGrid photos={photos} />
       ) : (
-        <div>there is nothing here</div>
+        <div>Something went wrong</div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -5,6 +5,8 @@ import Box from "@mui/material/Box";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
+import { Link as RouterLink } from "react-router-dom";
+
 // import Container from "@mui/material/Container";
 
 interface Props {
@@ -14,12 +16,6 @@ interface Props {
 const PhotosGrid: React.FC<Props> = ({ photos }) => {
   return (
     <Box>
-      {/* <Box sx={{ width: "50%" }}></Box>        sx={{
-        width: "100%",
-        height: "fit-content",
-        display: "flex",
-        justifyContent: "center",
-      }}*/}
       <ImageList
         variant="masonry"
         gap={6}
@@ -34,7 +30,7 @@ const PhotosGrid: React.FC<Props> = ({ photos }) => {
         }}
       >
         {photos.map(({ id, data: { author, title, likes, tags, url } }) => (
-          <ImageListItem key={id}>
+          <ImageListItem key={id} component={RouterLink} to={`/photo/${id}`}>
             <img
               src={`${url}`}
               srcSet={`${url}`}
@@ -46,7 +42,7 @@ const PhotosGrid: React.FC<Props> = ({ photos }) => {
               title={title}
               position="bottom"
               subtitle={<span>{author}</span>}
-            ></ImageListItemBar>
+            />
           </ImageListItem>
         ))}
       </ImageList>

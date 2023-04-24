@@ -1,0 +1,33 @@
+storage
+
+service firebase.storage {
+  match /b/{bucket}/o {
+	match /images/{userId}/{allPaths=**} {
+  	allow read;
+  	allow write: if
+  	request.auth != null &&
+  	request.resource.size < 2 * 1024 * 1024 && //2MB
+  	request.resource.contentType.matches('image/.*');
+  	allow update, delete : if request.auth.uid == userId
+		}
+  }
+}
+
+
+cloud firestore
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{user} {
+      allow read;
+   		allow create;
+      allow update, delete: if request.auth.uid != null && request.auth.uid == user;
+    }
+    match /photos/{photos} {
+      allow read;
+      allow create : if request.auth.uid != null 
+      allow update, delete: if request.auth.uid != null && request.auth.uid == resource.data.authorId
+    }
+  }
+}

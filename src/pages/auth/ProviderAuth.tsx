@@ -1,6 +1,5 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { AuthModal } from "../../context/AuthModalContext";
 import { auth, db } from "../../firebase/firebase";
 import Button from "@mui/material/Button";
 import GoogleIcon from "@mui/icons-material/Google";

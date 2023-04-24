@@ -6,7 +6,7 @@ const UserSettings = () => {
   if (!auth.currentUser) {
     return <Navigate to="/" />;
   }
-  return <div>UserSettings</div>;
+  return <Grid item> user settings</Grid>;
 };
 
 export default UserSettings;

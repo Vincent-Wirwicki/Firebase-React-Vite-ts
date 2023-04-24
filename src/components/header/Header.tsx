@@ -48,7 +48,7 @@ const Header = () => {
           </Typography>
         </div>
         <nav>
-          <Button variant="contained" component={RouterLink} to="/createPost">
+          <Button variant="contained" component={RouterLink} to="/PostPhoto">
             Post your photo
           </Button>
           {user ? (

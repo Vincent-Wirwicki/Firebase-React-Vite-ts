@@ -1,13 +1,7 @@
-// import {
-//   deleteUser,
-//   updateEmail,
-//   updatePassword,
-//   updateProfile,
-// } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/firebase";
-import { Navigate, useParams, Link as RouterLink } from "react-router-dom";
+import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { doc, getDoc, DocumentData } from "firebase/firestore";
 import UserPhotos from "./UserPhotos";
 import { UserRefType } from "../../types/Types";
@@ -35,44 +29,32 @@ import ListItemText from "@mui/material/ListItemText";
 interface Props {}
 
 const User: React.FC<Props> = ({}) => {
+  const navigate = useNavigate();
+  const { uid } = useParams();
   const [user, error, loading] = useAuthState(auth);
   const [userRef, setUserRef] = useState<DocumentData>();
-  const [openEditingModal, setOpenEditingModal] = useState<boolean>(false);
   const [tabValue, setTabValue] = useState<string>("1");
-
-  const onOpenEditingModal = () => setOpenEditingModal(true);
-  const onCloseEditingModal = () => setOpenEditingModal(false);
 
   const onTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
-  };
-  const { uid } = useParams();
-
-  const getUserRef = async () => {
-    if (uid) {
-      const docRef = doc(db, "users", uid);
-      const dataRef = await getDoc(docRef);
-      return dataRef.data() as UserRefType;
-    }
   };
 
   useEffect(() => {
     const fetchUserRef = async () => {
       try {
-        const dataRef = await getUserRef();
-        setUserRef(dataRef);
+        if (uid) {
+          const docRef = doc(db, "users", uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserRef(docSnap.data());
+          } else {
+            navigate("/");
+          }
+        }
       } catch (error) {}
     };
     fetchUserRef();
   }, []);
-
-  if (!user) {
-    return (
-      <>
-        <Navigate to="/" />
-      </>
-    );
-  }
 
   return (
     <Grid item xs={12} p={4}>
@@ -106,8 +88,8 @@ const User: React.FC<Props> = ({}) => {
                   color="primary"
                   aria-label="Edit "
                   component={RouterLink}
-                  to={"/user/:id/"}
-                  onClick={onOpenEditingModal}
+                  to={"/user/:id/settings"}
+                  // onClick={onOpenEditingModal}
                 >
                   <EditIcon />
                 </IconButton>
@@ -138,7 +120,13 @@ const User: React.FC<Props> = ({}) => {
             <Tab label="Photos" value="1" />
             <Tab label="Likes" value="2" />
           </TabList>
-          <TabPanel value="1">Photos</TabPanel>
+          <TabPanel value="1">
+            {userRef ? (
+              <UserPhotos userRef={userRef.uid} />
+            ) : (
+              <div> Something went wrong</div>
+            )}
+          </TabPanel>
           <TabPanel value="2">Likes</TabPanel>
         </TabContext>
       </Box>
@@ -147,3 +135,5 @@ const User: React.FC<Props> = ({}) => {
 };
 
 export default User;
+
+// http://127.0.0.1:5173/user/ip0vcZrqBsQAmS6HpKNPUoCVD363
