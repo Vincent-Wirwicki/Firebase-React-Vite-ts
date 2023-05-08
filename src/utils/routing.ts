@@ -1,4 +1,4 @@
-export const routePath = {
-  home: "/",
-  user: "/user/:id",
-};
+// export const routePath = {
+//   home: "/",
+//   user: "/user/:id",
+// };

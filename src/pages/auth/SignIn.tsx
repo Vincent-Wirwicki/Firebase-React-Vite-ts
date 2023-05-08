@@ -10,6 +10,7 @@ import { auth } from "../../firebase/firebase";
 import { Link } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 interface FormDataType {
   email: string;
@@ -18,6 +19,8 @@ interface FormDataType {
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
   const { handleSubmit, control } = useForm<FormDataType>({
     defaultValues: {
       email: "",
@@ -25,9 +28,6 @@ const SignIn = () => {
     },
     mode: "onBlur",
   });
-  //   if (auth.currentUser) {
-  //     return <Navigate to="/" />;
-  //   }
 
   const onSubmit = async (data: FormDataType) => {
     try {
@@ -38,8 +38,12 @@ const SignIn = () => {
     } catch (error) {}
   };
 
+  if (user) {
+    return <Navigate to="/" />;
+  }
+
   return (
-    <Grid item xs={6}>
+    <Grid item xs={2} sm={4} md={6}>
       <Box component="form" p={4} onSubmit={handleSubmit(onSubmit)}>
         <Stack justifyContent="center" spacing={2}>
           <Typography variant="h4" component="h4">

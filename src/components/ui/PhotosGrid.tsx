@@ -1,19 +1,29 @@
 import "../../styles/components/ui/photosGrid.css";
 // import { useState } from "react";
-import { DocPhotosType } from "../../types/Types";
+import { DocPhotosType, UserRefType } from "../../types/Types";
 import Box from "@mui/material/Box";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+
+import { DocumentData } from "firebase/firestore";
+import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 // import Container from "@mui/material/Container";
 
 interface Props {
   photos: Array<DocPhotosType>;
+  user?: DocumentData | UserRefType;
+  users?: UserRefType[];
+  // user?: Array<DocType
 }
 
-const PhotosGrid: React.FC<Props> = ({ photos }) => {
+const PhotosGrid: React.FC<Props> = ({ photos, user, users }) => {
+  const [hover, setHover] = useState<string | null>(null);
+
   return (
     <Box>
       <ImageList
@@ -29,20 +39,41 @@ const PhotosGrid: React.FC<Props> = ({ photos }) => {
           },
         }}
       >
-        {photos.map(({ id, data: { author, title, likes, tags, url } }) => (
-          <ImageListItem key={id} component={RouterLink} to={`/photo/${id}`}>
-            <img
-              src={`${url}`}
-              srcSet={`${url}`}
-              alt={title}
-              // className="photo__grid__card__img"
-              loading="lazy"
-            />
-            <ImageListItemBar
-              title={title}
-              position="bottom"
-              subtitle={<span>{author}</span>}
-            />
+        {photos.map(({ id, data: { title, likes, tags, url } }) => (
+          <ImageListItem
+            key={id}
+            onMouseEnter={() => setHover(id)}
+            onMouseLeave={() => setHover(null)}
+            component={RouterLink}
+            to={`/photo/${id}`}
+          >
+            <img src={`${url}`} srcSet={`${url}`} alt={title} loading="lazy" />
+            {hover === id && (
+              <div>
+                <ImageListItemBar
+                  title={
+                    user ? (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Avatar sx={{ widht: 40, height: 40 }}>M</Avatar>
+                        <Typography
+                          variant="body1"
+                          m={2}
+                          component={RouterLink}
+                          sx={{ color: "inherit", textDecoration: "none" }}
+                          to={`/user/${user.uid}`}
+                        >
+                          {user.userName}
+                        </Typography>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  }
+                  position="bottom"
+                />
+                <ImageListItemBar title={title} position="top" />
+              </div>
+            )}
           </ImageListItem>
         ))}
       </ImageList>

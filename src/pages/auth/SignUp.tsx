@@ -1,4 +1,4 @@
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate, Navigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,7 +7,10 @@ import Typography from "@mui/material/Typography";
 import ProviderAuth from "./ProviderAuth";
 import Grid from "@mui/material/Grid";
 import { auth, db } from "../../firebase/firebase";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useAuthState,
+  useCreateUserWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useForm, Controller } from "react-hook-form";
 import { updateProfile } from "firebase/auth";
@@ -21,6 +24,7 @@ interface FormDataType {
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
   const { handleSubmit, control } = useForm<FormDataType>({
     defaultValues: {
       userName: "",
@@ -63,12 +67,12 @@ const SignUp = () => {
     }
   };
 
-  // if (auth.currentUser) {
-  //   return <Navigate to="/" />;
-  // }
+  if (user) {
+    return <Navigate to="/" />;
+  }
 
   return (
-    <Grid item xs={6}>
+    <Grid item xs={2} sm={4} md={6}>
       <Box component="form" p={4} onSubmit={handleSubmit(onSubmit)}>
         <Stack justifyContent="center" spacing={2}>
           <Typography variant="h4" component="h4">

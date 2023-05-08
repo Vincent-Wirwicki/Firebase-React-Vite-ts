@@ -17,6 +17,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import Avatar from "@mui/material/Avatar";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import Chip from "@mui/material/Chip";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import useFetchPhoto from "../../hooks/useFetchPhoto";
 
@@ -47,60 +49,73 @@ const Photo = () => {
         return;
       });
       await deleteDoc(doc(db, "photos", uid));
-      navigate("/");
+      if (userRef) {
+        navigate(`/user/${userRef.uid}`);
+      }
     }
   };
 
   return (
     <Container>
-      <Grid item container columns={3} spacing={2}>
+      <Grid item container columns={3} spacing={2} component="section">
         <Grid item xs={2}>
           <img src={`${photoRef?.url}`} />
         </Grid>
         <Grid item xs={1}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Avatar sx={{ width: 80, height: 80 }}>
-              {userRef?.userName.charAt(0)}
-            </Avatar>
-            <Typography
-              variant="body1"
-              component={RouterLink}
-              to={`/user/${userRef?.uid}`}
-              sx={{ color: "inherit" }}
+          <Stack spacing={2}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
             >
-              {userRef?.userName}
-            </Typography>
-          </Stack>
-          {photoRef?.title}
-          {photoRef?.description}
-          {photoRef?.tags.map((tag: string, i: number) => (
-            <div key={i}>{tag}</div>
-          ))}
-          {photoRef &&
-          auth.currentUser &&
-          photoRef.authorId === auth.currentUser.uid ? (
-            <Stack>
-              <IconButton
-                onClick={handleOpenDialog}
-                color="error"
-                aria-label="delete picture"
-              >
-                <DeleteIcon />
-              </IconButton>
-              <IconButton
-                component={RouterLink}
-                to={`/photo/${uid}/edit`}
-                color="error"
-                aria-label="delete picture"
-              >
-                <EditIcon />
-              </IconButton>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Avatar sx={{ width: 80, height: 80 }}>
+                  {userRef?.userName.charAt(0)}
+                </Avatar>
+                <Typography
+                  variant="body1"
+                  component={RouterLink}
+                  to={`/user/${userRef?.uid}`}
+                  sx={{ color: "inherit" }}
+                >
+                  {userRef?.userName}
+                </Typography>
+                <Divider />
+              </Stack>
+              {photoRef &&
+              auth.currentUser &&
+              photoRef.authorId === auth.currentUser.uid ? (
+                <Stack direction="row">
+                  <IconButton
+                    component={RouterLink}
+                    to={`/photo/${uid}/edit`}
+                    color="primary"
+                    aria-label="delete picture"
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleOpenDialog}
+                    color="error"
+                    aria-label="delete picture"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Stack>
+              ) : null}
             </Stack>
-          ) : null}
+            <Typography variant="h4">{photoRef?.title}</Typography>
+            <Typography variant="body1">{photoRef?.description}</Typography>
+
+            {photoRef?.tags.map((tag: string, i: number) => (
+              <Chip
+                key={i}
+                label={tag}
+                variant="outlined"
+                sx={{ width: "fit-content" }}
+              />
+            ))}
+          </Stack>
           <Dialog
             open={openDialog}
             onClose={handleCloseDialog}

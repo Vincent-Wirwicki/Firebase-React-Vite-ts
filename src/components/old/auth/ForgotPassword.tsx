@@ -1,6 +1,6 @@
-import { AuthModal } from "../../context/AuthModalContext";
+import { AuthModal } from "../../../context/AuthModalContext";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
+import { auth } from "../../../firebase/firebase";
 import "../../styles/components/auth/form.css";
 import InputForm from "./InputForm";
 import { useState } from "react";

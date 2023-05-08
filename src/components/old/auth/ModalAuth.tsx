@@ -1,5 +1,5 @@
-import { AuthModal } from "../../context/AuthModalContext";
-import { auth } from "../../firebase/firebase";
+import { AuthModal } from "../../../context/AuthModalContext";
+import { auth } from "../../../firebase/firebase";
 import ForgotPassword from "./ForgotPassword";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";

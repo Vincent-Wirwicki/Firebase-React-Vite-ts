@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { AuthModal } from "../../context/AuthModalContext";
-import { auth, db } from "../../firebase/firebase";
+import { AuthModal } from "../../../context/AuthModalContext";
+import { auth, db } from "../../../firebase/firebase";
 
 const SignWithProvider: React.FC = () => {
   const { onCloseModal } = AuthModal();

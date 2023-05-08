@@ -10,6 +10,7 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
 import { useState } from "react";
 import { auth } from "../../firebase/firebase";
 
@@ -19,7 +20,7 @@ const EditPhoto = () => {
   const { photoRef, userRef } = useFetchPhoto(uid);
   const [update, setUpdate] = useState({ ...photoRef });
 
-  if (userRef && auth.currentUser && userRef.uid !== auth.currentUser.uid) {
+  if (!userRef || !auth.currentUser || userRef.uid !== auth.currentUser.uid) {
     return <Navigate to="/" />;
   }
 

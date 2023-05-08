@@ -1,4 +1,4 @@
-import { AuthModal } from "../../context/AuthModalContext";
+import { AuthModal } from "../../../context/AuthModalContext";
 import "../../styles/components/auth/form.css";
 
 interface Props {

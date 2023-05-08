@@ -4,6 +4,7 @@ import {
   RouterProvider,
   Route,
   createRoutesFromElements,
+  useLocation,
 } from "react-router-dom";
 import ErrorPage from "./pages/error/ErrorPage";
 import Root from "./pages/root/Root";
@@ -18,14 +19,28 @@ import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Photo from "./pages/photo/Photo";
 import EditPhoto from "./pages/photo/EditPhoto";
+import { lazy } from "react";
+import AlertDialog from "./pages/user/AlertDialog";
+// import { ThemeOptions } from "@material-ui/core/styles/createMuiTheme";
+import { ColorModeContextProvider } from "./context/ColorMode";
 
 const App = () => {
+  // const User = lazy(() => import("./pages/user/User"));
+  // const location = useLocation();
+  // const background = location.state && location.state.background;
+  // console.log(background);
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
         <Route index element={<Home />} />
         <Route path="/user/:uid" element={<User />} />
-        <Route path="/user/:uid/settings" element={<UserSettings />} />
+        <Route path="/user-settings/:uid" element={<UserSettings />}>
+          <Route
+            path="/user-settings/:uid/AlertDialog"
+            element={<AlertDialog />}
+          />
+        </Route>
         <Route path="/PostPhoto" element={<PostPhoto />} />
         <Route path="/photo/:uid" element={<Photo />} />
         <Route path="/photo/:uid/edit" element={<EditPhoto />} />
@@ -38,10 +53,12 @@ const App = () => {
   );
 
   return (
-    <AuthModalContextProvider>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </AuthModalContextProvider>
+    <>
+      <ColorModeContextProvider>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ColorModeContextProvider>
+    </>
   );
 };
 

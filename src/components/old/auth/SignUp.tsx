@@ -1,7 +1,7 @@
-import { auth, db } from "../../firebase/firebase";
+import { auth, db } from "../../../firebase/firebase";
 import { updateProfile } from "firebase/auth";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
-import { AuthModal } from "../../context/AuthModalContext";
+import { AuthModal } from "../../../context/AuthModalContext";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import InputForm from "./InputForm";
 import "../../styles/components/auth/form.css";

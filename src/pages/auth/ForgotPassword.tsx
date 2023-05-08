@@ -10,6 +10,7 @@ import ProviderAuth from "./ProviderAuth";
 import { auth } from "../../firebase/firebase";
 import { useForm, Controller } from "react-hook-form";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 interface FormDataType {
   email: string;
@@ -17,6 +18,8 @@ interface FormDataType {
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
   const { handleSubmit, control } = useForm<FormDataType>({
     defaultValues: {
       email: "",
@@ -29,12 +32,13 @@ const ForgotPassword = () => {
       navigate("/auth/signin");
     } catch (error) {}
   };
-  if (auth.currentUser) {
+
+  if (user) {
     return <Navigate to="/" />;
   }
 
   return (
-    <Grid item xs={6}>
+    <Grid item xs={2} sm={4} md={6}>
       <Box component="form" p={4} onSubmit={handleSubmit(onSubmit)}>
         <Stack justifyContent="center" spacing={2}>
           <Typography variant="h4" component="h4">
@@ -85,7 +89,7 @@ const ForgotPassword = () => {
                 to="/auth/signin"
                 sx={{ color: "inherit" }}
               >
-                Send
+                Sign In
               </Typography>
             </Stack>
           </Stack>

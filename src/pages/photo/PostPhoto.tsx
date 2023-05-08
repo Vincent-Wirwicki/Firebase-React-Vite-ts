@@ -1,5 +1,5 @@
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase/firebase";
 import {
   ref,
@@ -19,7 +19,6 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-
 import { Navigate, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
@@ -35,6 +34,8 @@ const PostPhoto = () => {
   const navigate = useNavigate();
   const [tag, setTag] = useState<string>("");
   const [tags, setTags] = useState<Array<string>>([]);
+  const [localUrl, setLocalUrl] = useState<string | undefined>();
+  const [imagePreview, setImagePreview] = useState<File | undefined>();
 
   const { handleSubmit, control, register } = useForm<FormDataType>({
     defaultValues: {
@@ -59,6 +60,16 @@ const PostPhoto = () => {
       ]);
     }
   };
+
+  useEffect(() => {
+    if (!imagePreview) {
+      setImagePreview(undefined);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(imagePreview);
+    setLocalUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [imagePreview]);
 
   const generateRandomString = () => {
     const charSet =
@@ -88,7 +99,6 @@ const PostPhoto = () => {
         const docRef = await addDoc(collection(db, "photos"), {
           title: data.title,
           description: data.description,
-          author: auth.currentUser.displayName,
           authorId: auth.currentUser.uid,
           createdAt: serverTimestamp(),
           tags: tags,
@@ -110,107 +120,119 @@ const PostPhoto = () => {
   }
 
   return (
-    <Grid item xs={8}>
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{ width: "50%" }}
-      >
-        <Stack spacing={2}>
-          <Typography variant="h4" component="h4">
-            Post your photo
-          </Typography>
-          <Controller
-            name="title"
-            control={control}
-            rules={{
-              required: true,
-              max: 180,
-            }}
-            render={({ field, fieldState: { error } }) => (
+    <>
+      <Grid item xs={2} sm={4} md={6}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          // sx={{ width: "50%" }}
+        >
+          <Stack spacing={2}>
+            <Typography variant="h4" component="h4">
+              Post your photo
+            </Typography>
+            <Controller
+              name="title"
+              control={control}
+              rules={{
+                required: true,
+                max: 180,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  autoComplete="true"
+                  label="title"
+                  variant="outlined"
+                  type="text"
+                  error={error !== undefined}
+                  helperText={error ? error.type === "" : ""}
+                  required
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              rules={{
+                required: true,
+                max: 180,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="description"
+                  variant="outlined"
+                  type="text"
+                  placeholder="description"
+                  multiline
+                  rows={4}
+                />
+              )}
+            />
+            <Stack direction="row" spacing={2}>
               <TextField
-                {...field}
-                autoComplete="true"
-                label="title"
-                variant="outlined"
-                type="title"
-                error={error !== undefined}
-                helperText={error ? error.type === "" : ""}
-                required
-              />
-            )}
-          />
-          <Controller
-            name="description"
-            control={control}
-            rules={{
-              required: true,
-              max: 180,
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                {...field}
-                label="description"
                 variant="outlined"
                 type="text"
-                placeholder="description"
-                multiline
-                rows={4}
+                label="tag"
+                placeholder="tag"
+                value={tag}
+                onChange={onChangeTag}
               />
+              <Button
+                onClick={onAddTag}
+                startIcon={<AddIcon />}
+                component="button"
+              >
+                add tag
+              </Button>
+            </Stack>
+            {tags.length > 0 ? (
+              <Stack direction="row" spacing={1}>
+                {tags.map((tag, i) => (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<CloseIcon />}
+                    key={i}
+                    onClick={onRemoveTag}
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </Stack>
+            ) : (
+              <div>no tag</div>
             )}
-          />
-          <Stack direction="row" spacing={2}>
-            <TextField
-              variant="outlined"
-              type="text"
-              label="tag"
-              placeholder="tag"
-              value={tag}
-              onChange={onChangeTag}
-            />
-            <Button
-              onClick={onAddTag}
-              startIcon={<AddIcon />}
-              component="button"
-            >
-              add tag
+            <Button variant="outlined" component="label">
+              Upload
+              <input
+                {...register("image", {
+                  required: true,
+                  onChange: e => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setImagePreview(e.target.files[0]);
+                    }
+                  },
+                })}
+                name="image"
+                style={{ display: "none" }}
+                accept=".jpg,.png,.jpeg"
+                maxLength={1}
+                type="file"
+              />
+            </Button>
+
+            <Button variant="contained" type="submit">
+              Submit
             </Button>
           </Stack>
-          {tags.length > 0 ? (
-            <Stack direction="row" spacing={1}>
-              {tags.map((tag, i) => (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<CloseIcon />}
-                  key={i}
-                  onClick={onRemoveTag}
-                >
-                  {tag}
-                </Button>
-              ))}
-            </Stack>
-          ) : (
-            <div>no tag</div>
-          )}
-          <Button variant="outlined" component="label">
-            Upload
-            <input
-              {...register("image", { required: true })}
-              name="image"
-              style={{ display: "none" }}
-              accept=".jpg,.png,.jpeg"
-              maxLength={1}
-              type="file"
-            />
-          </Button>
-
-          <Button variant="contained" type="submit">
-            Submit
-          </Button>
-        </Stack>
-      </Box>
-    </Grid>
+        </Box>
+      </Grid>
+      <Grid item xs={2} sm={4} md={6}>
+        {imagePreview && <img src={localUrl} />}
+      </Grid>
+    </>
   );
 };
 

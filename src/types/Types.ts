@@ -1,7 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface PhotoDataType {
-  author: string;
   authorId: string;
   description: string;
   title: string;

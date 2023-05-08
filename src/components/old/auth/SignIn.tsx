@@ -1,6 +1,6 @@
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { AuthModal } from "../../context/AuthModalContext";
-import { auth } from "../../firebase/firebase";
+import { AuthModal } from "../../../context/AuthModalContext";
+import { auth } from "../../../firebase/firebase";
 import InputForm from "./InputForm";
 import SpanForm from "./SpanForm";
 import "../../styles/components/auth/form.css";

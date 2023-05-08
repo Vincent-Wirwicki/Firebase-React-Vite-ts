@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/firebase";
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
-import { doc, getDoc, DocumentData } from "firebase/firestore";
-import UserPhotos from "./UserPhotos";
-import { UserRefType } from "../../types/Types";
+import {
+  doc,
+  getDoc,
+  DocumentData,
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs,
+} from "firebase/firestore";
+import { DocPhotosType, PhotoDataType, UserRefType } from "../../types/Types";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -25,36 +32,73 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import PhotosGrid from "../../components/ui/PhotosGrid";
+import LinearProgress from "@mui/material/LinearProgress";
 
 interface Props {}
 
 const User: React.FC<Props> = ({}) => {
   const navigate = useNavigate();
   const { uid } = useParams();
-  const [user, error, loading] = useAuthState(auth);
+  // const [user, error, loading] = useAuthState(auth);
+  const [loading, setLoading] = useState(false);
   const [userRef, setUserRef] = useState<DocumentData>();
+  const [photosRef, setPhotosRef] = useState<Array<DocPhotosType> | undefined>(
+    []
+  );
   const [tabValue, setTabValue] = useState<string>("1");
-
   const onTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 
   useEffect(() => {
-    const fetchUserRef = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
         if (uid) {
           const docRef = doc(db, "users", uid);
           const docSnap = await getDoc(docRef);
+          const photosRef = collection(db, "photos");
+          const q = query(
+            photosRef,
+            where("authorId", "==", uid),
+            orderBy("createdAt", "desc")
+          );
+          const querySnapshot = await getDocs(q);
+          const photos: Array<DocPhotosType> = [];
+          querySnapshot.forEach(doc => {
+            return photos.push({
+              id: doc.id,
+              data: doc.data() as PhotoDataType,
+            });
+          });
+          setPhotosRef(photos);
           if (docSnap.exists()) {
-            setUserRef(docSnap.data());
+            setUserRef(docSnap.data() as UserRefType);
+            setLoading(false);
           } else {
             navigate("/");
           }
         }
       } catch (error) {}
     };
-    fetchUserRef();
+    fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <Grid
+        item
+        xs={4}
+        sm={8}
+        md={12}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
+        <LinearProgress sx={{ width: "100%" }} />
+        {/* <CircularProgress /> */}
+      </Grid>
+    );
+  }
 
   return (
     <Grid item xs={12} p={4}>
@@ -88,7 +132,7 @@ const User: React.FC<Props> = ({}) => {
                   color="primary"
                   aria-label="Edit "
                   component={RouterLink}
-                  to={"/user/:id/settings"}
+                  to={`/user-settings/${userRef.uid}`}
                   // onClick={onOpenEditingModal}
                 >
                   <EditIcon />
@@ -121,8 +165,8 @@ const User: React.FC<Props> = ({}) => {
             <Tab label="Likes" value="2" />
           </TabList>
           <TabPanel value="1">
-            {userRef ? (
-              <UserPhotos userRef={userRef.uid} />
+            {photosRef && userRef ? (
+              <PhotosGrid photos={photosRef} user={userRef} />
             ) : (
               <div> Something went wrong</div>
             )}
@@ -135,5 +179,3 @@ const User: React.FC<Props> = ({}) => {
 };
 
 export default User;
-
-// http://127.0.0.1:5173/user/ip0vcZrqBsQAmS6HpKNPUoCVD363

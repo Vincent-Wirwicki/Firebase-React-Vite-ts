@@ -1,5 +1,11 @@
+import Grid from "@mui/material/Grid";
+
 const Home = () => {
-  return <div>HOME</div>;
+  return (
+    <Grid item xs={4} sm={8} md={12}>
+      HOME
+    </Grid>
+  );
 };
 
 export default Home;
