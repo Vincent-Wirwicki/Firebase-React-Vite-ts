@@ -1,8 +1,11 @@
 # Firebase-React-Vite-ts
 
-I don't know where this project is going, just wanted to learn more about Firebase.
+This project is for testing firebase and Mui
 
-Currently we have :
+Currently I have :
 
-user auth (sign in, sign up, sign with provider)
-new user are added to firestore collection
+Auth : sign in, sign up, sign with provider, forgot password
+
+When user log in for the first the user is added to firestore database.
+
+User can post with title, description, tags... the photo is stored inside firebase storage
